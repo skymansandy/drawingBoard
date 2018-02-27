@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="styles/styles.css" type="text/css">
+	</head>
+<body style="background-color: #ffff00">
+	<center>
+		<canvas id="myCanvas" style="border-right: 2px solid black; float:left; background-color:#FFFFFF" 
+			onmousedown="mouseClick('down',event)" onmouseup="mouseClick('up',event)"  
+			ondblclick="deleteOne(event)" onmousemove="previewShape(event)" style="border:1px solid #000000;">
+			Your browser does not support the HTML5 canvas tag.
+		</canvas>
+		<div style="float:right; margin-right:25px;">
+			<h2>Drawing Pad</h3>
+			<h4>Shapes</h4>
+			<button onclick="changeShape('Rectangle')">Rectangle</button><br>
+			<button onclick="changeShape('Triangle')">Triangle</button><br>
+			<button onclick="changeShape('Circle')">Circle</button><br>
+			<hr>
+			<h4>Choose Color</h4>
+			<input id="colorPicker" type="color" style="width:200px" value="#ff0000">
+			<input type="checkbox" id="ourColor">
+			<hr>
+			<h4>Tools</h4>
+			<button id="saveAsPNG">Save as PNG</button><br>
+			<button id="clearCanvas" onClick="clearCanvasPrompt()">Clear Canvas</button>
+		</div>
+		
+		<script type="text/javascript" src="scripts/primitives.js"></script>
+		<script type="text/javascript" src="scripts/circle.js"></script>
+		<script type="text/javascript" src="scripts/rectangle.js"></script>
+		<script type="text/javascript" src="scripts/triangle.js"></script>
+		<script type="text/javascript" src="scripts/index.js" ></script>
+	</center>
+</body>
+</html>
