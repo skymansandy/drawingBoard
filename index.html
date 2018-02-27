@@ -4,33 +4,45 @@
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="styles/styles.css" type="text/css">
 	</head>
-<body style="background-color: #ffff00">
+<body style="background-color: #ffff00" onresize="applySizes()">
 	<center>
 		<canvas id="myCanvas" style="border-right: 2px solid black; float:left; background-color:#FFFFFF" 
-			onmousedown="mouseClick('down',event)" onmouseup="mouseClick('up',event)"  
+			onmousedown="mouseDown(event)" onmouseup="mouseUp(event)"
 			ondblclick="deleteOne(event)" onmousemove="previewShape(event)" style="border:1px solid #000000;">
 			Your browser does not support the HTML5 canvas tag.
 		</canvas>
-		<div style="float:right; margin-right:25px;">
-			<h2>Drawing Pad</h3>
-			<h4>Shapes</h4>
-			<button onclick="changeShape('Rectangle')">Rectangle</button><br>
-			<button onclick="changeShape('Triangle')">Triangle</button><br>
-			<button onclick="changeShape('Circle')">Circle</button><br>
-			<hr>
-			<h4>Choose Color</h4>
-			<input id="colorPicker" type="color" style="width:200px" value="#ff0000">
-			<input type="checkbox" id="ourColor">
-			<hr>
-			<h4>Tools</h4>
-			<button id="saveAsPNG">Save as PNG</button><br>
-			<button id="clearCanvas" onClick="clearCanvasPrompt()">Clear Canvas</button>
+		<div style="background-color: #ffff00; float:right; margin-right:25px;">
+			<center>
+				<h2>Drawing Pad</h3>
+				<h4>Shapes</h4>
+				<input id="Line" class="btn" onclick="changeShape('Line')" type="image" src="images/line.png" alt="Line">
+				<input id="Rectangle" class="btn" onclick="changeShape('Rectangle')" type="image" src="images/rect.png" alt="Rectangle">
+				<input id="Triangle" class="btn" onclick="changeShape('Triangle')" type="image" src="images/triangle.png" alt="Triangle"><br>
+				<input id="Circle" class="btn" onclick="changeShape('Circle')" type="image" src="images/circle.png" alt="Circle">
+				<input id="Pentagon" class="btn" onclick="changeShape('Pentagon')" type="image" src="images/pentagon.png" alt="Circle">
+				<input id="LineLoop" class="btn" onclick="changeShape('LineLoop')" type="image" src="images/Arrow Loop.ico" alt="Line"><br><hr>
+				<h4>Edit</h4>
+				<button onclick="undo()">Undo</button>
+				<button onclick="Redo()">Redo</button>
+
+				<hr>
+				<h4>Choose Color</h4>
+				<input id="colorPicker" type="color" style="width:200px" value="#ff0000"><br><br>
+				<span id="colorPickerStatus">Not Applied</span><input type="checkbox" id="ourColor" onclick="colorOptionToggle()">
+				<hr>
+				<h4>Tools</h4>
+				<button id="saveAsPNG">Save as PNG</button><br>
+				<button id="clearCanvas" onClick="clearCanvasPrompt()">Clear Canvas</button>
+			</center>
 		</div>
-		
+
 		<script type="text/javascript" src="scripts/primitives.js"></script>
+		<script type="text/javascript" src="scripts/line.js"></script>
 		<script type="text/javascript" src="scripts/circle.js"></script>
-		<script type="text/javascript" src="scripts/rectangle.js"></script>
 		<script type="text/javascript" src="scripts/triangle.js"></script>
+		<script type="text/javascript" src="scripts/rectangle.js"></script>
+		<script type="text/javascript" src="scripts/pentagon.js"></script>
+		<script type="text/javascript" src="scripts/lineloop.js"></script>
 		<script type="text/javascript" src="scripts/index.js" ></script>
 	</center>
 </body>

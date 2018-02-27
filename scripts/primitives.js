@@ -17,9 +17,8 @@ function getRandomColor() {
 	return color;
   }
 
-function transform(p,x1,x2,y1,y2)
+function transform(p,dx,dy)
 {
-	p.x-=(x1-x2);
-	p.y-=(y1-y2);
+	p.x-=dx;
+	p.y-=dy;
 }
-  

@@ -8,9 +8,10 @@ function Rectangle(a,b,c,d,color){
 	this.draw=drawRectangle;
 	this.checkInside=checkInsideRectangle;
 	this.move=moveRectangle;
+	this.scale=scaleRectangle;
 }
 
-function drawRectangle(){
+function drawRectangle(curItem){
 	ctx.beginPath();
 	ctx.moveTo(this.a.x,this.a.y);
 	ctx.lineTo(this.b.x,this.b.y);
@@ -18,12 +19,19 @@ function drawRectangle(){
 	ctx.lineTo(this.d.x,this.d.y);
 	ctx.closePath();
 	ctx.fillStyle=this.color;
-	ctx.fill();
+	if(!curItem)
+		ctx.fill();
 	ctx.stroke();
 }
 
 function checkInsideRectangle(p){
-	if(p.x>=this.a.x&&p.x<=this.c.x&&p.y>=this.a.y&&p.y<=this.c.y)
+	var areaSub1=getTriangleArea(this.a,this.b,p);
+	var areaSub2=getTriangleArea(this.b,this.c,p);
+	var areaSub3=getTriangleArea(this.c,this.d,p);
+	var areaSub4=getTriangleArea(this.d,this.a,p);
+	var areaMain=getRectangleArea(this.a,this.b,this.c,this.d);
+
+	if(areaMain==areaSub1+areaSub2+areaSub3+areaSub4)
 		return true;
 	return false;
 }
@@ -31,18 +39,14 @@ function checkInsideRectangle(p){
 function moveRectangle(start,end){
 	var dx=(start.x-end.x);
 	var dy=(start.y-end.y);
-	this.a.x-=dx;
-	this.a.y-=dy;
-	this.b.x-=dx;
-	this.b.y-=dy;
-	this.c.x-=dx;
-	this.c.y-=dy;
-	this.d.x-=dx;
-	this.d.y-=dy;
+	transform(this.a,dx,dy);
+	transform(this.b,dx,dy);
+	transform(this.c,dx,dy);
+	transform(this.d,dx,dy);
 }
 
 function getRectangleArea(a,b,c,d){
-	return ((c.x-a.x)*(c.y-a.y));
+	return Math.abs((c.x-a.x)*(c.y-a.y));
 }
 
 function getRectangle(p1,p2,color){
@@ -53,4 +57,9 @@ function getRectangle(p1,p2,color){
 	if(getRectangleArea(a,b,c,d)>0)
 		return new Rectangle(a,b,c,d,color);
 	return null;
+}
+
+
+function scaleRectangle(){
+	
 }

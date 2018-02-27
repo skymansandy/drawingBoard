@@ -7,6 +7,7 @@ function Triangle(a,b,c,color){
 	this.draw=drawTriangle;
 	this.checkInside=checkInsideTriangle;
 	this.move=moveTriangle;
+	this.scale=scaleTriangle;
 }
 
 function checkInsideTriangle(p){
@@ -22,15 +23,12 @@ function checkInsideTriangle(p){
 function moveTriangle(start,end){
 	var dx=(start.x-end.x);
 	var dy=(start.y-end.y);
-	this.a.x-=dx;
-	this.a.y-=dy;
-	this.b.x-=dx;
-	this.b.y-=dy;
-	this.c.x-=dx;
-	this.c.y-=dy;
+	transform(this.a,dx,dy);
+	transform(this.b,dx,dy);
+	transform(this.c,dx,dy);
 }
 
-function drawTriangle()
+function drawTriangle(curItem)
 {
 	ctx.beginPath();
 			ctx.moveTo(this.a.x,this.a.y);
@@ -38,7 +36,8 @@ function drawTriangle()
 			ctx.lineTo(this.c.x,this.c.y);
 	ctx.closePath();
 	ctx.fillStyle=this.color;
-	ctx.fill();
+	if(!curItem)
+		ctx.fill();
 	ctx.stroke();
 }
 
@@ -53,4 +52,9 @@ function getTriangle(p1,p2,color){
 
 function getTriangleArea(a,b,c){
 	return (Math.abs(a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y-b.y))/2);
+}
+
+
+function scaleTriangle(){
+	
 }

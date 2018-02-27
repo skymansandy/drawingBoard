@@ -1,4 +1,5 @@
 var x1,y1,x2,y2,moving,draggingThis,movingItem,tempShape,movingIndex;
+var statePressed;
 var startPoint, endPoint;
 var p1,p2,p3,p4;
 var set=[];
@@ -6,6 +7,8 @@ var dragging=false;
 var con=document.getElementById("canvasContainer");
 var canvas=document.getElementById("myCanvas");
 var ctx=canvas.getContext("2d");
+var checkBoxColor=document.getElementById("ourColor");
+var checkBoxStatus=document.getElementById("colorPickerStatus");
 var shapeColor;
 var offset=3;
 
@@ -17,12 +20,27 @@ button.addEventListener('click', function (e) {
    saveLink.click();
 });
 
-var drawingNow="Rectangle";
+function colorOptionToggle(){
+	checkBoxStatus.innerHTML= checkBoxColor.checked?"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applied":"Not Applied";
+}
 
-canvas.height=window.innerHeight;
-canvas.width=window.innerWidth-280;
+
+var drawingNow="Rectangle";
+document.getElementById(drawingNow).style.backgroundColor="#ffffff";
+
+document.onload=applySizes();
+
+function applySizes(){
+	clearCanvas(ctx,canvas);
+	canvas.height=window.innerHeight;
+	canvas.width=window.innerWidth-280;
+	drawAllShapes();
+}
+
 
 function changeShape(newShape){
+	document.getElementById(drawingNow).style.backgroundColor=null;
+	document.getElementById(newShape).style.backgroundColor="#ffffff";
 	drawingNow=newShape;
 }
 
@@ -31,7 +49,7 @@ function clearCanvasPrompt(){
 	{
 		clearCanvas(ctx,canvas);
 		set.length=0;
-	}	
+	}
 }
 
 function deleteOne(event){
@@ -39,6 +57,7 @@ function deleteOne(event){
 	if(set.length>1)
 	{
 		var i=findOneShape(curPoint);
+		console.log(i);
 		if(i!=-1)
 		{
 			for(i;i<set.length-1;i++)
@@ -57,9 +76,7 @@ function deleteOne(event){
 
 function findOneShape(p){
 	for(i=set.length-1;i>=0;i--){
-		var shape=set[i];
-		if(shape.checkInside(p)){
-			moving=true;
+		if(set[i].checkInside(p)){
 			return i;
 		}
 	}
@@ -67,37 +84,39 @@ function findOneShape(p){
 }
 
 function previewShape(event){
-	clearCanvas(ctx,canvas);
 	if(dragging==true){
 		//update
+		clearCanvas(ctx,canvas);
 		x2=event.x-offset;
 		y2=event.y-offset;
 		if(moving){
 				endPoint=new Point(x2,y2);
 				movingItem.move(startPoint,endPoint);
+				drawAllShapes();
 				startPoint.x=x2;
 				startPoint.y=y2;
 		}
 		else{
 			p2=new Point(x2,y2);
+			drawAllShapes();
 			tempShape=getShape(p1,p2,shapeColor);
 			if(tempShape!=null)
-				tempShape.draw();
+				tempShape.draw(true);
 		}
 	}
-	drawAllShapes();
 }
 
-function mouseClick(state,event)
-{
-	if(state=="down")
+function mouseDown(event){
+	statePressed=true;
+	x1=event.x-offset;
+	y1=event.y-offset;
+	p1=new Point(x1,y1);
+	startPoint=new Point(x1,y1);
+	dragging=true;
+	shapeColor=(document.getElementById("ourColor").checked)?document.getElementById("colorPicker").value:getRandomColor();
+
+	if(true)//event.ctrlKey)
 	{
-		x1=event.x-offset;
-		y1=event.y-offset;
-		p1=new Point(x1,y1);
-		startPoint=new Point(x1,y1);
-		dragging=true;
-		shapeColor=(document.getElementById("ourColor").checked)?document.getElementById("colorPicker").value:getRandomColor();
 		movingIndex=findOneShape(p1);
 		if(movingIndex!=-1)
 		{
@@ -105,28 +124,30 @@ function mouseClick(state,event)
 			movingItem=set[movingIndex];
 		}
 	}
-	else
-	{
-		x2=event.x-offset;
-		y2=event.y-offset;
-		p2=new Point(x2,y2);
-		clearCanvas(ctx,canvas);
-		dragging=false;
-		if(moving==true)
-			moving=false;
-		else{
-			tempShape=getShape(p1,p2,shapeColor);
-			if(tempShape!=null)
-				set.push(tempShape);
-		}
-		drawAllShapes();
+}
+
+function mouseUp(event){
+	statePressed=false;
+	x2=event.x-offset;
+	y2=event.y-offset;
+	p2=new Point(x2,y2);
+	clearCanvas(ctx,canvas);
+	dragging=false;
+	if(moving==true)
+		moving=false;
+	else{
+		tempShape=getShape(p1,p2,shapeColor);
+		if(tempShape!=null)
+			set.push(tempShape);
 	}
+	drawAllShapes();
 }
 
 function drawAllShapes(){
 	for(i=0;i<set.length;i++){
 		var shape=set[i];
-		shape.draw();
+		var fillCurrentItem=(moving==true&&i==movingIndex?true:false);
+		shape.draw(fillCurrentItem);
 	}
 }
 
@@ -138,5 +159,7 @@ function getShape(p1,p2,color){
 			return getRectangle(p1, p2, shapeColor);
 		case "Circle":
 			return getCircle(p1, p2, shapeColor);
+		case "Line":
+			return getLine(p1, p2, shapeColor);
 	}
 }
