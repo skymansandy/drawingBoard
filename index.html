@@ -33,8 +33,8 @@
 					</select>
 				</div>
 				<br><hr>
-				<input onclick="undo()" onmousedown="this.style.backgroundColor='#ffffff';" onmouseup="this.style.backgroundColor=null" class="btn" type="image" src="images/undo.png" alt="Undo">
-				<input onclick="redo()" onmousedown="this.style.backgroundColor='#ffffff';" onmouseup="this.style.backgroundColor=null" class="btn" type="image" src="images/redo.png" alt="Redo">
+				<input onclick="stack.undo()" onmousedown="this.style.backgroundColor='#ffffff';" onmouseup="this.style.backgroundColor=null" class="btn" type="image" src="images/undo.png" alt="Undo">
+				<input onclick="stack.redo()" onmousedown="this.style.backgroundColor='#ffffff';" onmouseup="this.style.backgroundColor=null" class="btn" type="image" src="images/redo.png" alt="Redo">
 				<input onclick="clearCanvasPrompt()" onmousedown="this.style.backgroundColor='#ffffff';" onmouseup="this.style.backgroundColor=null" class="btn" type="image" src="images/clear.png" alt="Clear canvas">
 
 				<hr>
@@ -57,9 +57,9 @@
 		<script type="text/javascript" src="scripts/lineloop.js"></script>
 		<script type="text/javascript" src="scripts/index.js" ></script>
 	</center>
-	<div class="alert" id="customAlertBox">
-			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-			This is an alert box.
+	<div class="alert" id="customAlertBox" style="display:none">
+			<span class="closeBtn" onclick="fadeOutAlert(this.parentElement)">&times;</span> 
+			<span id="msgHolder">This is an alert box.</span>
 	</div>
 </body>
 </html>

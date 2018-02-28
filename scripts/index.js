@@ -10,9 +10,9 @@ var canvas=document.getElementById("myCanvas");
 var ctx=canvas.getContext("2d");
 var checkBoxColor=document.getElementById("ourColor");
 var checkBoxStatus=document.getElementById("colorPickerStatus");
-var customAlert=document.getElementById("customAlertBox");
+
 var shapeColor;
-var offset=3;
+var xOffset=36,yOffset=3;
 
 
 document.onload=applySizes();
@@ -22,13 +22,16 @@ document.getElementById(curDrawingShape).style.backgroundColor="#ffffff";
 
 //stack for undo redo
 var stack=new ActionStack();
+stack.record();
 
-function undo(){
-	stack.pop();
+function showAlert(msg){
+	document.getElementById("customAlertBox").style.display="block";
+	document.getElementById("msgHolder").innerHTML=msg;
 }
 
-function redo(){
-
+function fadeOutAlert(div){
+	div.style.opacity = "0";
+	setTimeout(function(){ div.style.display = "none"; }, 600);
 }
 
 var button = document.getElementById('saveAsPNG');
@@ -37,7 +40,7 @@ saveLink.download="art.png";
 saveLink.href= canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 button.addEventListener('click', function (e) {
 	if(canvasEmpty)
-		alert("Canvas is empty. Draw Something before saving!");
+		showAlert("Canvas is empty. Draw Something before saving!");
 	else
    		saveLink.click();
 });
@@ -56,7 +59,6 @@ function applySizes(){
 	clearCanvas(ctx,canvas);
 	canvas.height=window.innerHeight;
 	canvas.width=window.innerWidth-300;
-	customAlert.style.marginTop=canvas.height;
 	drawAllShapes();
 }
 
@@ -81,7 +83,7 @@ function getNumOfPoints(shape){
 
 function clearCanvasPrompt(){
 	if(set.length==0)
-		alert("Nothing to clear");
+		showAlert("Nothing to clear");
 	else if(confirm("Sure to clear the canvas?"))
 	{
 		clearCanvas(ctx,canvas);
@@ -91,23 +93,23 @@ function clearCanvasPrompt(){
 }
 
 function deleteOne(event){
-	var curPoint=new Point(event.x-offset,event.y-offset);
+	var curPoint=new Point(event.x-xOffset,event.y-yOffset);
+	var found=findOneShape(curPoint);
 	if(set.length>1)
 	{
-		var i=findOneShape(curPoint);
-		console.log(i);
-		if(i!=-1)
+		if(found!=-1)
 		{
 			for(i;i<set.length-1;i++)
 				set[i]=set[i+1];
 			set.length--;
 		}
-		if(i==set.length-1)
+		if(found==set.length-1)
 			set.length--;
 	}
-	else if(findOneShape(curPoint)!=-1)
+	else if(found!=-1)
 		set.length=0;
-
+	if(found!=-1)
+		stack.record();
 	clearCanvas(ctx,canvas);
 	drawAllShapes();
 }
@@ -125,8 +127,8 @@ function previewShape(event){
 	if(dragging==true){
 		//update
 		clearCanvas(ctx,canvas);
-		x2=event.x-offset;
-		y2=event.y-offset;
+		x2=event.x-xOffset;
+		y2=event.y-yOffset;
 		if(moving){
 				endPoint=new Point(x2,y2);
 				movingItem.move(startPoint,endPoint);
@@ -146,8 +148,8 @@ function previewShape(event){
 
 function mouseDown(event){
 	statePressed=true;
-	x1=event.x-offset;
-	y1=event.y-offset;
+	x1=event.x-xOffset;
+	y1=event.y-yOffset;
 	p1=new Point(x1,y1);
 	startPoint=new Point(x1,y1);
 	dragging=true;
@@ -166,18 +168,22 @@ function mouseDown(event){
 
 function mouseUp(event){
 	statePressed=false;
-	x2=event.x-offset;
-	y2=event.y-offset;
+	x2=event.x-xOffset;
+	y2=event.y-yOffset;
 	p2=new Point(x2,y2);
 	clearCanvas(ctx,canvas);
 	dragging=false;
-	if(moving==true)
+	if(moving==true){
 		moving=false;
+		stack.record();
+	}
 	else{
 		tempShape=getShape(p1,p2,shapeColor);
 		if(tempShape!=null)
+		{
 			set.push(tempShape);
-		stack.push(curDrawingShape+" added");
+			stack.record();
+		}
 	}
 	drawAllShapes();
 }

@@ -1,25 +1,30 @@
 function ActionStack(){
-	this.actions=[]
-	this.top=-1;
-	this.push=pushAction;
-	this.pop=popAction;
-	this.settle=settleActionStack;
-	this.getSize=getSize;
+    this.top=-1;
+    this.stack=[];
+    this.undo=undoStack;
+    this.redo=redoStack;
+    this.record=recordAction;
 }
 
-function getSize(){
-	return this.actions.length;
+function recordAction(){
+    this.stack.push(set.slice());
+    this.top++;
 }
 
-function pushAction(action){
-	this.actions[this.getSize()]=action;
+function undoStack(){
+    if(this.top>0)
+    set= this.stack[--this.top];
+    else
+    showAlert("Nothing to Undo!");
+    clearCanvas(ctx, canvas);
+    drawAllShapes();
 }
 
-function popAction(){
-	var revoke=this.actions[this.getSize()-1];
-	console.log(revoke);
-}
-
-function settleActionStack(){
-
+function redoStack(){
+    if (this.top<this.stack.length-1)
+    set= this.stack[++this.top];
+    else
+    showAlert("Nothing to Redo!");
+    clearCanvas(ctx, canvas);
+    drawAllShapes();
 }
