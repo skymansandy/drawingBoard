@@ -1,5 +1,5 @@
 function Rectangle(a,b,c,d,color){
-	this.tag="Rectangle";
+	this.numPoints=4;
 	this.a=a;
 	this.b=b;
 	this.c=c;

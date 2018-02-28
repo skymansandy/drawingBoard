@@ -1,5 +1,5 @@
 function Line(a,b,color){
-	this.tag="Line";
+	this.numPoints=2;
 	this.a=a;
 	this.b=b;
 	this.color=color;

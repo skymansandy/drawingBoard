@@ -1,5 +1,5 @@
 function Circle(c,rad,color){
-	this.tag="Circle";
+	this.numPoints=0;
 	this.c=c;
 	this.rad=rad;
 	this.color=color;

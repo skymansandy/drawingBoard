@@ -1,5 +1,5 @@
 function Triangle(a,b,c,color){
-	this.tag="Triangle";
+	this.numPoints=3;
 	this.a=a;
 	this.b=b;
 	this.c=c;

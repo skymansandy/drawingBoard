@@ -1,7 +1,8 @@
-var x1,y1,x2,y2,moving,draggingThis,movingItem,tempShape,movingIndex;
+var x1,y1,x2,y2,moving,movingItem,tempShape,movingIndex;
+var canvasEmpty=true;
 var statePressed;
 var startPoint, endPoint;
-var p1,p2,p3,p4;
+var p1,p2;
 var set=[];
 var dragging=false;
 var con=document.getElementById("canvasContainer");
@@ -9,15 +10,36 @@ var canvas=document.getElementById("myCanvas");
 var ctx=canvas.getContext("2d");
 var checkBoxColor=document.getElementById("ourColor");
 var checkBoxStatus=document.getElementById("colorPickerStatus");
+var customAlert=document.getElementById("customAlertBox");
 var shapeColor;
 var offset=3;
+
+
+document.onload=applySizes();
+var curDrawingShape='Rectangle';
+var pointsForCurShape=4;
+document.getElementById(curDrawingShape).style.backgroundColor="#ffffff";
+
+//stack for undo redo
+var stack=new ActionStack();
+
+function undo(){
+	stack.pop();
+}
+
+function redo(){
+
+}
 
 var button = document.getElementById('saveAsPNG');
 var saveLink=document.createElement('a');
 saveLink.download="art.png";
 saveLink.href= canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
 button.addEventListener('click', function (e) {
-   saveLink.click();
+	if(canvasEmpty)
+		alert("Canvas is empty. Draw Something before saving!");
+	else
+   		saveLink.click();
 });
 
 function colorOptionToggle(){
@@ -25,30 +47,46 @@ function colorOptionToggle(){
 }
 
 
-var drawingNow="Rectangle";
-document.getElementById(drawingNow).style.backgroundColor="#ffffff";
 
-document.onload=applySizes();
+function clearCanvas(ctx,canvas){
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+}
 
 function applySizes(){
 	clearCanvas(ctx,canvas);
 	canvas.height=window.innerHeight;
-	canvas.width=window.innerWidth-280;
+	canvas.width=window.innerWidth-300;
+	customAlert.style.marginTop=canvas.height;
 	drawAllShapes();
 }
 
 
 function changeShape(newShape){
-	document.getElementById(drawingNow).style.backgroundColor=null;
+	document.getElementById(curDrawingShape).style.backgroundColor=null;
 	document.getElementById(newShape).style.backgroundColor="#ffffff";
-	drawingNow=newShape;
+	curDrawingShape=newShape;
+	pointsForCurShape=getNumOfPoints(newShape);
+}
+
+function getNumOfPoints(shape){
+	switch(shape){
+		case 'LineLoop':return -1;
+		case 'Circle':return 0;
+		case 'Line':return 2;
+		case 'Triangle':return 3;
+		case 'Rectangle':return 4;
+		case 'Polygon':return document.getElementById("inputNumOfShapes").value;
+	}
 }
 
 function clearCanvasPrompt(){
-	if(confirm("Sure to clear the canvas?"))
+	if(set.length==0)
+		alert("Nothing to clear");
+	else if(confirm("Sure to clear the canvas?"))
 	{
 		clearCanvas(ctx,canvas);
 		set.length=0;
+		canvasEmpty=true;
 	}
 }
 
@@ -139,6 +177,7 @@ function mouseUp(event){
 		tempShape=getShape(p1,p2,shapeColor);
 		if(tempShape!=null)
 			set.push(tempShape);
+		stack.push(curDrawingShape+" added");
 	}
 	drawAllShapes();
 }
@@ -149,17 +188,23 @@ function drawAllShapes(){
 		var fillCurrentItem=(moving==true&&i==movingIndex?true:false);
 		shape.draw(fillCurrentItem);
 	}
+	canvasEmpty=(set.length==0)?true:false;
 }
 
 function getShape(p1,p2,color){
-	switch(drawingNow){
-		case "Triangle":
-			return getTriangle(p1, p2, shapeColor);
-		case "Rectangle":
-			return getRectangle(p1, p2, shapeColor);
-		case "Circle":
-			return getCircle(p1, p2, shapeColor);
-		case "Line":
-			return getLine(p1, p2, shapeColor);
+	switch(pointsForCurShape){
+		case -1:
+			console.log("Drawing line loop");
+		break;
+		case 0:
+			return getCircle(p1, p2, shapeColor, pointsForCurShape);
+		case 2:
+			return getLine(p1, p2, shapeColor, pointsForCurShape);
+		case 3:
+			return getTriangle(p1, p2, shapeColor, pointsForCurShape);
+		case 4:
+			return getRectangle(p1, p2, shapeColor, pointsForCurShape);
+		default:
+			return getPolygon(p1, p2, shapeColor, pointsForCurShape);
 	}
 }

@@ -4,10 +4,6 @@ function Point(x,y){
 	this.transform=transform;
 }
 
-function clearCanvas(ctx,canvas){
-	ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
 function getRandomColor() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
