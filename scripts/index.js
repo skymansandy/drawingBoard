@@ -99,12 +99,10 @@ function deleteOne(event){
 	{
 		if(found!=-1)
 		{
-			for(i;i<set.length-1;i++)
+			for(i=found;i<set.length-1;i++)
 				set[i]=set[i+1];
 			set.length--;
 		}
-		if(found==set.length-1)
-			set.length--;
 	}
 	else if(found!=-1)
 		set.length=0;
